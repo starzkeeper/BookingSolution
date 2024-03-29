@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}Главная страница{% endblock %}
+{% block content %}
+{%load app_tags%}
+<form action="" method="POST">
+    {% csrf_token %}
+    <div class="col-lg-2">
+        <label for="">Check in</label>
+        {{ form.cin }}
+    </div>
+    <div class="col-lg-2">
+        <label for="">Check Out</label>
+        {{ form.cout }}
+    </div>
+    <div class="col-lg-2">
+        <label for="">Person</label>
+        {{ form.person }}
+    </div>
+    <div class="col-lg-2">
+
+        <input type="submit" value="Check Availabilty" class="form-control mr-sm-2 btn btn-primary my-4" style="position: relative;top: 7px;">
+    </div>
+    {% if rooms %}
+    <p class="text-center text-success">Rooms Available</p>
+    {% endif %}
+</form>
+<!--Booking Section ends here-->
+<!--Fetched results here-->
+<div class="container-fluid px-0 mx-aut">
+        {% if rooms %}
+           <table class="table">
+               <thead class="o">
+                <th>Room Number</th>
+                <th>Person</th>
+                <th>price</th>
+            </thead>
+            {% for r in rooms %}
+                <tr class="">
+                <td>{{ r.number }}</td>
+                <td>{{ r.places }}</td>
+                <td>{{ r.price }}</td>
+
+                </tr>
+            {% endfor %}
+
+           </table>
+        {% endif %}
+    </div>
+{% endblock %}
