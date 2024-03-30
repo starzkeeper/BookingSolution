@@ -7,6 +7,14 @@ class DateInput(forms.DateInput):
 
 
 class DateForm(forms.Form):
-    cin = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=date.today())
-    cout = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=date.today())
-    person = forms.IntegerField()
+    sort_choices = [
+        ('asc', 'Возрастанию цены'), ('desc', 'Убыванию цены'), ('number', 'По номеру комнаты')
+    ]
+
+    cin = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Заезд')
+    cout = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Выезд')
+    person = forms.IntegerField(label="Количество гостей")
+    sort = forms.ChoiceField(
+        choices=sort_choices,
+        widget=forms.Select(attrs=
+                            {"class": "form-control"}), initial=None, required=False, label='Сортировать по')

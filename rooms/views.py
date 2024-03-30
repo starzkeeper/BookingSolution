@@ -10,17 +10,22 @@ from .models import Room, Reservation
 from .serializers import RoomSerializer, ReservationSerializer
 from rest_framework.exceptions import ValidationError
 from datetime import datetime as dt
+from .utils import sort_rooms
 
 
 def index(request):
-    rooms = Room.objects.all()
+    rooms = Room.objects.all().order_by('number')
     if request.method == 'POST':
         form = DateForm(request.POST)
         if form.is_valid():
             check_in = form.cleaned_data['cin']  # Получение данных из формы
             check_out = form.cleaned_data['cout']
+            if str(check_in) > str(check_out):
+                return HttpResponse('Неверно указаны даты')
+
             person = form.cleaned_data['person']
-            rooms = Reservation.check_booking(check_in, check_out, person)
+            sort_by = form.cleaned_data['sort']
+            rooms = sort_rooms(sort_by, check_in, check_out, person)
             data = {'rooms': rooms, 'form': form}
             response = render(request, 'index.html', data)
     else:
