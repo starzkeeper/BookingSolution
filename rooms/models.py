@@ -6,7 +6,6 @@ class Room(models.Model):
     number = models.PositiveSmallIntegerField(unique=True, verbose_name='Номер')
     price = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Цена')
     places = models.PositiveSmallIntegerField()
-    is_booked = models.BooleanField()
 
     class Meta:
         verbose_name = 'Комнаты'
