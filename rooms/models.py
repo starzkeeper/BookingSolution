@@ -1,9 +1,10 @@
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 
 class Room(models.Model):
-    number = models.PositiveSmallIntegerField(unique=True, verbose_name='Номер')
+    number = models.PositiveSmallIntegerField(primary_key=True, verbose_name='Номер')
     price = models.DecimalField(max_digits=6, decimal_places=2, verbose_name='Цена')
     places = models.PositiveSmallIntegerField()
 
@@ -13,6 +14,9 @@ class Room(models.Model):
 
     def __str__(self):
         return f'Номер: {self.number}'
+
+    def get_absolute_url(self):
+        return reverse('reservation', kwargs={"pk": self.pk})
 
 
 class Reservation(models.Model):
@@ -35,5 +39,5 @@ class Reservation(models.Model):
                     each_reservation.check_out):
                 pass
             else:
-                rr.append(each_reservation.room.id)
-        return Room.objects.all().filter(places__gte=person).exclude(id__in=rr)
+                rr.append(each_reservation.room.number)
+        return Room.objects.all().filter(places__gte=person).exclude(number__in=rr)

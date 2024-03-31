@@ -1,5 +1,6 @@
 from django import forms
 from datetime import date
+from .models import Reservation
 
 
 class DateInput(forms.DateInput):
@@ -18,3 +19,14 @@ class DateForm(forms.Form):
         choices=sort_choices,
         widget=forms.Select(attrs=
                             {"class": "form-control"}), initial=None, required=False, label='Сортировать по')
+
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = Reservation
+        fields = '__all__'
+        widgets = {
+            'check_in': DateInput(attrs={'min': date.today()}),
+            'check_out': DateInput(attrs={'min': date.today()})
+        }
+

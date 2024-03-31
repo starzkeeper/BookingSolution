@@ -1,11 +1,11 @@
-import datetime
-
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.views.generic import ListView
+from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, FormView
+from django.views.generic.edit import FormMixin
 from rest_framework import viewsets
 
-from .forms import DateForm
+from .forms import DateForm, ReservationForm
 from .models import Room, Reservation
 from .serializers import RoomSerializer, ReservationSerializer
 from rest_framework.exceptions import ValidationError
@@ -14,7 +14,6 @@ from .utils import sort_rooms
 
 
 def index(request):
-    rooms = Room.objects.all().order_by('number')
     if request.method == 'POST':
         form = DateForm(request.POST)
         if form.is_valid():
@@ -30,13 +29,20 @@ def index(request):
             response = render(request, 'index.html', data)
     else:
         form = DateForm()
-        data = {'rooms': rooms, 'form': form}
+        data = {'form': form}
         response = render(request, 'index.html', data)
     return HttpResponse(response)
 
 
+class ReservationView(FormMixin, DetailView):
+    model = Room
+    form_class = ReservationForm
+    template_name = 'reservation.html'
+    success_url = reverse_lazy('index')
+
+
 class RoomViewSet(viewsets.ModelViewSet):
-    queryset = Room.objects.all()
+    queryset = Room.objects.all().order_by('number')
     serializer_class = RoomSerializer
 
 

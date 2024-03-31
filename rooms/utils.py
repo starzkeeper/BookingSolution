@@ -1,5 +1,3 @@
-from rest_framework.exceptions import ValidationError
-
 from rooms.models import Reservation
 
 

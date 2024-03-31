@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Главная страница{% endblock %}
 {% block content %}
-{%load app_tags%}
 <form action="" method="POST">
     {% csrf_token %}
     <div class="col-lg-2">
@@ -22,14 +21,15 @@
                 <th>Room Number</th>
                 <th>Person</th>
                 <th>price</th>
+           {% for r in rooms %}
             </thead>
-            {% for r in rooms %}
                 <tr class="">
                 <td>{{ r.number }}</td>
                 <td>{{ r.places }}</td>
                 <td>{{ r.price }}</td>
-
+                <td><a href="{{ r.get_absolute_url }}">Забронировать</a></td>
                 </tr>
+
             {% endfor %}
 
            </table>
