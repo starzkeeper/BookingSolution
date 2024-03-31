@@ -12,9 +12,9 @@ class DateForm(forms.Form):
         ('asc', 'Возрастанию цены'), ('desc', 'Убыванию цены'), ('number', 'По номеру комнаты')
     ]
 
-    cin = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Заезд')
-    cout = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Выезд')
-    guests = forms.IntegerField(label="Количество гостей")
+    check_in = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Заезд')
+    check_out = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Выезд')
+    guests = forms.IntegerField(label="Количество гостей", initial=1)
     sort = forms.ChoiceField(
         choices=sort_choices,
         widget=forms.Select(attrs=

@@ -22,8 +22,8 @@ class Home(FormMixin, ListView):
         queryset = Room.objects.all()  # возвращаем queryset
         form = DateForm(self.request.GET)
         if form.is_valid():
-            check_in = form.cleaned_data.get('cin')  # Получение данных из формы
-            check_out = form.cleaned_data.get('cout')
+            check_in = form.cleaned_data.get('check_in')  # Получение данных из формы
+            check_out = form.cleaned_data.get('check_out')
             if str(check_in) > str(check_out):
                 return HttpResponse('Неверно указаны даты')
 
@@ -59,11 +59,11 @@ class NotBookedRoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
 
     def get_queryset(self):
-        check_in = self.request.query_params.get('cin')  # Получение данных из формы
-        check_out = self.request.query_params.get('cout')
+        check_in = self.request.query_params.get('check_in')  # Получение данных из формы
+        check_out = self.request.query_params.get('check_out')
         guests = self.request.query_params.get('guests')
         if not all([check_in, check_out, guests]):
-            raise ValidationError("Введите параметры cin, cout и person")
+            raise ValidationError("Введите параметры check_in, check_out и person")
         if check_in > check_out:
             raise ValidationError('Неверно указана дата въезда')
         try:
