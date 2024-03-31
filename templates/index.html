@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Главная страница{% endblock %}
 {% block content %}
-<form action="" method="POST">
+<form action="" method="GET">
     {% csrf_token %}
     <div class="col-lg-2">
         {{form.as_p}}

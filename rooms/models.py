@@ -29,7 +29,7 @@ class Reservation(models.Model):
         return self.guest.username
 
     @classmethod
-    def check_booking(cls, check_in, check_out, person):
+    def check_booking(cls, check_in, check_out, guests):
         rr = []
         # Фильтрация дат
         for each_reservation in cls.objects.all():
@@ -40,4 +40,4 @@ class Reservation(models.Model):
                 pass
             else:
                 rr.append(each_reservation.room.number)
-        return Room.objects.all().filter(places__gte=person).exclude(number__in=rr)
+        return Room.objects.all().filter(places__gte=guests).exclude(number__in=rr)

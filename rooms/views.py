@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, FormView
-from django.views.generic.edit import FormMixin
+from django.views.generic.edit import FormMixin, ModelFormMixin
 from rest_framework import viewsets
 
 from .forms import DateForm, ReservationForm
@@ -13,28 +13,32 @@ from datetime import datetime as dt
 from .utils import sort_rooms
 
 
-def index(request):
-    if request.method == 'POST':
-        form = DateForm(request.POST)
+class Home(FormMixin, ListView):
+    template_name = 'index.html'
+    form_class = DateForm
+    context_object_name = 'rooms'
+
+    def get_queryset(self):
+        queryset = Room.objects.all()  # возвращаем queryset
+        form = DateForm(self.request.GET)
         if form.is_valid():
-            check_in = form.cleaned_data['cin']  # Получение данных из формы
-            check_out = form.cleaned_data['cout']
+            check_in = form.cleaned_data.get('cin')  # Получение данных из формы
+            check_out = form.cleaned_data.get('cout')
             if str(check_in) > str(check_out):
                 return HttpResponse('Неверно указаны даты')
 
-            person = form.cleaned_data['person']
-            sort_by = form.cleaned_data['sort']
-            rooms = sort_rooms(sort_by, check_in, check_out, person)
-            data = {'rooms': rooms, 'form': form}
-            response = render(request, 'index.html', data)
-    else:
-        form = DateForm()
-        data = {'form': form}
-        response = render(request, 'index.html', data)
-    return HttpResponse(response)
+            guests = form.cleaned_data.get('guests')
+            sort_by = form.cleaned_data.get('sort')
+            queryset = sort_rooms(sort_by, check_in, check_out, guests)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class(self.request.GET)
+        return context
 
 
-class ReservationView(FormMixin, DetailView):
+class ReservationView(ModelFormMixin, DetailView):
     model = Room
     form_class = ReservationForm
     template_name = 'reservation.html'
@@ -57,8 +61,8 @@ class NotBookedRoomViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         check_in = self.request.query_params.get('cin')  # Получение данных из формы
         check_out = self.request.query_params.get('cout')
-        person = self.request.query_params.get('person')
-        if not all([check_in, check_out, person]):
+        guests = self.request.query_params.get('guests')
+        if not all([check_in, check_out, guests]):
             raise ValidationError("Введите параметры cin, cout и person")
         if check_in > check_out:
             raise ValidationError('Неверно указана дата въезда')
@@ -67,5 +71,5 @@ class NotBookedRoomViewSet(viewsets.ModelViewSet):
             dt.strptime(check_out, '%Y-%m-%d')
         except ValueError:
             raise ValidationError('Неверно указаны даты')
-        queryset = Reservation.check_booking(check_in, check_out, person)
+        queryset = Reservation.check_booking(check_in, check_out, guests)
         return queryset
