@@ -7,11 +7,35 @@
         {{form.as_p}}
         <input type="submit" value="Check Availabilty" class="form-control mr-sm-2 btn btn-primary my-4" style="position: relative;top: 7px;">
     </div>
-
+</form>
     {% if rooms %}
     <p class="text-center text-success">Rooms Available</p>
     {% endif %}
-</form>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    // Получаем элементы формы
+    var checkInInput = document.getElementById("id_check_in");
+    var checkOutInput = document.getElementById("id_check_out");
+
+    // Обработчик события изменения значения check_in
+    checkInInput.addEventListener("change", function () {
+        // Устанавливаем максимальное значение для check_in
+        checkOutInput.min = checkInInput.value;
+
+        // Устанавливаем минимальное значение для check_out
+        checkInInput.max = checkOutInput.value;
+    });
+
+    // Обработчик события изменения значения check_out
+    checkOutInput.addEventListener("change", function () {
+        // Устанавливаем максимальное значение для check_in
+        checkOutInput.min = checkInInput.value;
+
+        // Устанавливаем минимальное значение для check_out
+        checkInInput.max = checkOutInput.value;
+    });
+});
+</script>
 <!--Booking Section ends here-->
 <!--Fetched results here-->
 <div class="container-fluid px-0 mx-aut">

@@ -16,8 +16,8 @@ class DateForm(forms.Form):
         ('asc', 'Возрастанию цены'), ('desc', 'Убыванию цены'), ('number', 'По номеру комнаты')
     ]
 
-    check_in = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Заезд')
-    check_out = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Выезд')
+    check_in = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, label='Заезд')
+    check_out = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, label='Выезд')
     guests = forms.IntegerField(label="Количество гостей", widget=NumberInput(attrs={'value': 1}))
     sort = forms.ChoiceField(
         choices=sort_choices,
@@ -30,8 +30,9 @@ class ReservationForm(forms.ModelForm):
         model = Reservation
         fields = '__all__'
         widgets = {
-            'check_in': DateInput(attrs={'min': date.today()}),
-            'check_out': DateInput(attrs={'min': date.today()}),
+            'room': forms.HiddenInput(),
+            'check_in': forms.HiddenInput(),
+            'check_out': forms.HiddenInput(),
             'guest': forms.HiddenInput()
         }
 

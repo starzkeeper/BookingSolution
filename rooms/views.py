@@ -24,12 +24,6 @@ class Home(FormMixin, ListView):
         if form.is_valid():
             check_in = form.cleaned_data.get('check_in')  # Получение данных из формы
             check_out = form.cleaned_data.get('check_out')
-            print(self.request.session['check_in'])
-            if str(check_in) > str(check_out):
-                raise ValidationError("Неверно указаны даты")
-            if (check_in and not check_out) or (check_out and not check_in):
-                raise ValidationError('Вторая дата не введена')
-
             guests = form.cleaned_data.get('guests')
             sort_by = form.cleaned_data.get('sort')
             queryset = sort_rooms(sort_by, check_in, check_out, guests)
@@ -55,16 +49,16 @@ class ReservationView(LoginRequiredMixin, CreateView):
     template_name = 'reservation.html'
     success_url = reverse_lazy('index')
     login_url = "/account/login/"
-    redirect_field_name = ''
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
         kwargs['initial'] = {
+            'room': self.kwargs['pk'],
             'check_in': self.request.session.get('check_in'),
             'check_out': self.request.session.get('check_out')
         }
-        print(kwargs)
+
         return kwargs
 
 
