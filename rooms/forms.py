@@ -1,5 +1,8 @@
 from django import forms
 from datetime import date
+
+from django.contrib.auth import get_user_model
+
 from .models import Reservation
 
 
@@ -27,6 +30,13 @@ class ReservationForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'check_in': DateInput(attrs={'min': date.today()}),
-            'check_out': DateInput(attrs={'min': date.today()})
+            'check_out': DateInput(attrs={'min': date.today()}),
+            'guest': forms.HiddenInput()
         }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(ReservationForm, self).__init__(*args, **kwargs)
+        if user:
+            self.fields['guest'].initial = user.id
 
