@@ -2,6 +2,7 @@ from django import forms
 from datetime import date
 
 from django.contrib.auth import get_user_model
+from django.forms import NumberInput
 
 from .models import Reservation
 
@@ -17,7 +18,7 @@ class DateForm(forms.Form):
 
     check_in = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Заезд')
     check_out = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, required=False, label='Выезд')
-    guests = forms.IntegerField(label="Количество гостей", initial=1)
+    guests = forms.IntegerField(label="Количество гостей", widget=NumberInput(attrs={'value': 1}))
     sort = forms.ChoiceField(
         choices=sort_choices,
         widget=forms.Select(attrs=

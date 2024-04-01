@@ -24,6 +24,7 @@ class Home(FormMixin, ListView):
         if form.is_valid():
             check_in = form.cleaned_data.get('check_in')  # Получение данных из формы
             check_out = form.cleaned_data.get('check_out')
+            print(self.request.session['check_in'])
             if str(check_in) > str(check_out):
                 raise ValidationError("Неверно указаны даты")
             if (check_in and not check_out) or (check_out and not check_in):
@@ -36,7 +37,14 @@ class Home(FormMixin, ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        form = self.get_form()
+        initial_data = {'check_in': self.request.GET.get('check_in', None),
+                        'check_out': self.request.GET.get('check_out', None),
+                        'guests': self.request.GET.get('guests', None),
+                        'sort': self.request.GET.get('sort', None)}
+        self.request.session['check_in'] = self.request.GET.get('check_in', None)
+        self.request.session['check_out'] = self.request.GET.get('check_out', None)
+        self.request.session.modified = True
+        form = DateForm(initial=initial_data)
         context['form'] = form
         return context
 
@@ -52,6 +60,11 @@ class ReservationView(LoginRequiredMixin, CreateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['user'] = self.request.user
+        kwargs['initial'] = {
+            'check_in': self.request.session.get('check_in'),
+            'check_out': self.request.session.get('check_out')
+        }
+        print(kwargs)
         return kwargs
 
 
