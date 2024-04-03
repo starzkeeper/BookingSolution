@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.urls import reverse
+from datetime import datetime as dt
 
 
 class Room(models.Model):
@@ -25,22 +26,34 @@ class Reservation(models.Model):
     check_in = models.DateField()
     check_out = models.DateField()
 
-    class Meta:
-        unique_together = ['room', 'check_in', 'check_out']
-
     def __str__(self):
         return self.guest.username
 
+    def get_absolute_url(self):
+        return reverse('delete-reservation', kwargs={"pk": self.pk})
+
     @classmethod
-    def check_booking(cls, check_in, check_out, guests):
+    def check_booking(cls, check_in, check_out, guests=1, pk=None):
         rr = []
+        check_in = str(check_in)
+        check_out = str(check_out)
         # Фильтрация дат
-        for each_reservation in cls.objects.all():
-            if str(check_in) < str(each_reservation.check_in) and str(check_out) <= str(each_reservation.check_in):
-                pass
-            elif str(check_in) >= str(each_reservation.check_out) and str(check_out) > str(
-                    each_reservation.check_out):
-                pass
+        if dt.strptime(check_in, '%Y-%m-%d') < dt.strptime(check_out, '%Y-%m-%d') \
+                and dt.strptime(check_in, '%Y-%m-%d').date() >= dt.today().date():
+            for each_reservation in cls.objects.all():
+                if (dt.strptime(check_in, '%Y-%m-%d') < dt.strptime(str(each_reservation.check_in), '%Y-%m-%d')
+                        and dt.strptime(check_out, '%Y-%m-%d') <= dt.strptime(str(each_reservation.check_in),
+                                                                              '%Y-%m-%d')):
+                    pass
+                elif (dt.strptime(check_in, '%Y-%m-%d') >= dt.strptime(str(each_reservation.check_out), '%Y-%m-%d')
+                      and dt.strptime(check_out, '%Y-%m-%d') > dt.strptime(str(each_reservation.check_out),
+                                                                           '%Y-%m-%d')):
+                    pass
+                else:
+                    rr.append(each_reservation.room.number)
+            if pk:
+                return Room.objects.all().filter(places__gte=guests, pk=pk).exclude(number__in=rr)
             else:
-                rr.append(each_reservation.room.number)
-        return Room.objects.all().filter(places__gte=guests).exclude(number__in=rr)
+                return Room.objects.all().filter(places__gte=guests).exclude(number__in=rr)
+        else:
+            return False

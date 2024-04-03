@@ -13,7 +13,7 @@ class DateInput(forms.DateInput):
 
 class DateForm(forms.Form):
     sort_choices = [
-        ('asc', 'Возрастанию цены'), ('desc', 'Убыванию цены'), ('number', 'По номеру комнаты')
+        ('price', 'Возрастанию цены'), ('-price', 'Убыванию цены'), ('number', 'По номеру комнаты')
     ]
 
     check_in = forms.DateField(widget=DateInput(attrs={'min': date.today()}), initial=None, label='Заезд')
