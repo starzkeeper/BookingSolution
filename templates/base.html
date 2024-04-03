@@ -31,9 +31,9 @@
 
 <body>
   <ul class="sidebar-nav">
-        <li>User: {{ user.get_username }}</li>
         <li><a href="{% url 'index' %}">Главная</a></li>
     {% if user.is_authenticated %}
+        <li>User: {{ user.get_username }}</li>
         <li><a href="{% url 'reserved' %}">Мои резервации</a></li>
         <li>
             <form action="{% url 'logout' %}" method="post">
