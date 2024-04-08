@@ -10,8 +10,14 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class ReservationSerializer(serializers.ModelSerializer):
-    guest = serializers.HiddenField(default=serializers.CurrentUserDefault())
-
     class Meta:
         model = Reservation
-        fields = '__all__'
+        read_only_fields = ('active',)
+        fields = ('room', 'check_in', 'check_out', 'active',)
+
+
+class ReservationSerializerUpdateStatusActive(serializers.ModelSerializer):
+    class Meta:
+        model = Reservation
+        read_only_fields = ('room', 'check_in', 'check_out',)
+        fields = ('room', 'check_in', 'check_out', 'active')
