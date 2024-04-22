@@ -13,7 +13,7 @@
   pip3 install -r requirements.txt
 ```
 
-make sure you a postgres database configured for connection
+ make sure you a postgres database configured for connection
 
 3. Run Application
 > python manage.py runserver 
